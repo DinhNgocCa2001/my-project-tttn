@@ -22,7 +22,7 @@ public class ProductDAO implements IProductDAO {
         return (List<Product>) entityManager.createQuery(hql).getResultList();
     }
     @Override
-    public Product getProduct(int bookId) {
+    public Product getProduct(Long bookId) {
 
         return entityManager.find(Product.class, bookId);
     }
@@ -34,22 +34,23 @@ public class ProductDAO implements IProductDAO {
     }
 
     @Override
-    public Product updateProduct(int bookId, Product book) {
+    public Product updateProduct(Long bookId, Product book) {
 
         Product bookFromDB = getProduct(bookId);
         bookFromDB.setName(book.getName());
         bookFromDB.setPrice(book.getPrice());
-        bookFromDB.setDiscount(book.getDiscount());
+        bookFromDB.setCategoryId(book.getCategoryId());
         bookFromDB.setDescription(book.getDescription());
-        bookFromDB.setLink(book.getLink());
+        bookFromDB.setImage(book.getImage());
         bookFromDB.setStatus(book.getStatus());
+        bookFromDB.setDiscount(book.getDiscount());
         entityManager.flush();
 
         Product updatedBook = getProduct(bookId);
         return updatedBook;
     }
     @Override
-    public boolean deleteProduct(int bookId) {
+    public boolean deleteProduct(Long bookId) {
         Product book = getProduct(bookId);
         entityManager.remove(book);
 

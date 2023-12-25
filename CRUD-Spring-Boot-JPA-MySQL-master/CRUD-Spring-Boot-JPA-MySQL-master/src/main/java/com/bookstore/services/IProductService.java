@@ -11,13 +11,13 @@ public interface IProductService {
 	
 	List<Product> getProducts();
 	Product createProduct(Product product);
-	Product updateProduct(int productId, Product product);
-	Product getProduct(int productId);
-	boolean deleteProduct(int productId);
+	Product updateProduct(Long productId, Product product);
+	Product getProduct(Long productId);
+	boolean deleteProduct(Long productId);
 
 	List<Product> getPasring(Pageable pageable);
 
-	Page<Map<String, Object>> searchParsing(String search, Pageable pageable);
+	Page<Map<String, Object>> searchParsing(String token, String search, Pageable pageable);
 
 
 }

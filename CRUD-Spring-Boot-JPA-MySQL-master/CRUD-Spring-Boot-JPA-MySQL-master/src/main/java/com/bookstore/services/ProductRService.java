@@ -17,7 +17,7 @@ public class ProductRService {
     public ProductRService(ProductRepo repository) {
         this.repo = repository;
     }
-    public Product getById(Integer id) throws Exception {
+    public Product getById(Long id) throws Exception {
         Product currency = repo.findById(id).orElseThrow(() -> new Exception("currency-not-found"));
         return currency;
     }

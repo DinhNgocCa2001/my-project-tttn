@@ -2,9 +2,19 @@ package com.bookstore.api;
 
 //import com.bookstore.model.Currency;
 
+import com.bookstore.entity.Color;
+import com.bookstore.entity.DTO.ColorItem;
+import com.bookstore.entity.DTO.Response;
+import com.bookstore.entity.DTO.SizeItem;
 import com.bookstore.entity.Product;
+import com.bookstore.entity.Size;
+import com.bookstore.repo.ColorRepo;
 import com.bookstore.repo.ProductRepo;
+import com.bookstore.repo.SizeRepo;
+import com.bookstore.services.JwtService;
 import com.bookstore.services.ProductService;
+import com.bookstore.services.ProductVariantService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,44 +30,54 @@ import java.util.Map;
 public class ProductApi {
 
     private ProductService productService;
+    private ProductVariantService productVariantService;
     private ProductRepo repo;
+    private SizeRepo sizeRepo;
+    private ColorRepo colorRepo;
 
-    public ProductApi(ProductService productService, ProductRepo repo) {
+    @Autowired
+    private JwtService jwtService;
+
+
+    public ProductApi(ProductService productService, ProductRepo repo, SizeRepo sizeRepo, ColorRepo colorRepo, ProductVariantService productVariantService) {
 
         this.productService = productService;
         this.repo = repo;
+        this.productVariantService = productVariantService;
+        this.sizeRepo = sizeRepo;
+        this.colorRepo = colorRepo;
     }
 
 
     @GetMapping("get-by-id/{id}")
     protected Product getByCid(
-            @PathVariable("id") Integer id
+            @PathVariable("id") Long id
     ) throws Exception {
         Product result = productService.getProduct(id);
         return result;
     }
 
     @GetMapping("get-all")
-    protected List<Product> getAll( Pageable pageable) throws Exception {
+    protected List<Product> getAll(Pageable pageable) throws Exception {
 //        List<Product> result = productService.getPasring(pageable);
         return productService.getPasring(pageable);
     }
 
     @PutMapping("update/{id}")
     protected ResponseEntity<Product> updateByid(
-            @PathVariable("id") Integer id,
+            @PathVariable("id") Long id,
             @RequestBody Product book
     ) throws Exception {
-        Product result = productService.updateProduct(id,book);
+        Product result = productService.updateProduct(id, book);
         return new ResponseEntity<Product>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("delete/{id}")
     protected ResponseEntity<Product> delete(
-            @PathVariable("id") Integer id,
+            @PathVariable("id") Long id,
             @RequestBody Product book
     ) throws Exception {
-        Product result = productService.updateProduct(id,book);
+        Product result = productService.updateProduct(id, book);
         return new ResponseEntity<Product>(result, HttpStatus.OK);
     }
 
@@ -77,9 +97,69 @@ public class ProductApi {
 //    }
 
     @GetMapping("search")
-    protected Page<Map<String, Object>> searchParsing(
-            @RequestParam(value = "search", defaultValue = "#") String search
+//    protected Page<Map<String, Object>> searchParsing(
+    protected ResponseEntity<Response> searchParsing(
+            @RequestHeader("Authorization") String bearerToken
+            , @RequestParam(value = "search", defaultValue = "#") String search
             , Pageable pageable) {
-        return productService.searchParsing(search, pageable);
+        try {
+//            return productService.searchParsing(search, pageable);
+
+            String userId = null;
+            String token = null;
+            try {
+                token = jwtService.validateToken(bearerToken);
+                userId = jwtService.getUserNameJwt(token);
+            } catch (Exception ex) {
+                //Sử dụng Constants.ResponseCode.EXPIRED_JWT hoặc Constants.ResponseCode.INVALID_JWT
+//                Response response = new Response(Constants.ResponseCode.EXPIRED_JWT, null, true, ex.toString());
+                Response response = new Response("00", "Chưa đăng nhập", true, null);
+                return ResponseEntity.ok(response);
+            }
+            Page<Map<String, Object>> result = productService.searchParsing(token, search, pageable);
+            Response response = new Response("01", "", true, result);
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            Response response = new Response("02", "Có lỗi xảy ra", true, "");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @GetMapping("get-productVariant-by-id/{id}")
+    protected List<Map<String, Object>> getByProductId(
+            @PathVariable("id") Long id
+    ) throws Exception {
+        List<Map<String, Object>> result = productVariantService.getByProductId(id);
+        return result;
+    }
+
+    @GetMapping("get-productVariant-by-id-color/{id}")
+    protected List<ColorItem> getColorByProductId(
+            @PathVariable("id") Long id
+    ) throws Exception {
+        List<ColorItem> result = productVariantService.getColorByProductId(id);
+        return result;
+    }
+
+    @GetMapping("get-productVariant-by-id-size/{id}")
+    protected List<SizeItem> getSizeByProductId(
+            @PathVariable("id") Long id
+    ) throws Exception {
+        List<SizeItem> result = productVariantService.getSizeByProductId(id);
+        return result;
+    }
+
+    @GetMapping("get-all-color")
+    protected List<Color> getAllColor(
+    ) throws Exception {
+        List<Color> result = colorRepo.findAll();
+        return result;
+    }
+
+    @GetMapping("get-all-size")
+    protected List<Size> getAllSize(
+    ) throws Exception {
+        List<Size> result = sizeRepo.findAll();
+        return result;
     }
 }

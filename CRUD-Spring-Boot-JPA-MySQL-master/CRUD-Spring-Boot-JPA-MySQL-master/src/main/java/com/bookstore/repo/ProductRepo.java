@@ -3,6 +3,7 @@ package com.bookstore.repo;
 import com.bookstore.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -11,18 +12,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface ProductRepo extends PagingAndSortingRepository<Product, Integer> {
-    Optional<Product> findById(Integer id);
+public interface ProductRepo extends JpaRepository<Product, Long>, PagingAndSortingRepository<Product, Long> {
+    Optional<Product> findById(Long id);
 
     List<Product> findByStatus(boolean status, Pageable pageable);
 
     @Query(value = "select ac.id as id," +
             " ac.name as name," +
-            " ac.price as price," +
-            " ac.discount as discount," +
-            " ac.link as link," +
             " ac.description as description," +
-            " ac.status as status" +
+            " ac.price as price," +
+            " ac.image as image," +
+            " ac.categoryId as categoryId," +
+            " ac.createdAt as createdAt," +
+            " ac.updatedAt as updatedAt," +
+            " ac.status as status," +
+            " ac.discount as discount" +
             " from Product as ac" +
             " where" +
             " ac.status = :status" +

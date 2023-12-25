@@ -7,9 +7,9 @@ import java.util.List;
 public interface IProductDAO {
 
     List<Product> getProducts();
-    Product getProduct(int productId);
+    Product getProduct(Long productId);
     Product createProduct(Product product);
-    Product updateProduct(int ProductId,Product product);
-    boolean deleteProduct(int productId);
+    Product updateProduct(Long ProductId, Product product);
+    boolean deleteProduct(Long productId);
 
 }
