@@ -5,7 +5,6 @@ package com.bookstore.api;
 import com.bookstore.entity.Color;
 import com.bookstore.entity.DTO.ColorItem;
 import com.bookstore.entity.DTO.Response;
-import com.bookstore.entity.DTO.SizeAndColorItem;
 import com.bookstore.entity.DTO.SizeItem;
 import com.bookstore.entity.Product;
 import com.bookstore.entity.Size;
@@ -27,8 +26,8 @@ import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("product")
-public class ProductApi {
+@RequestMapping("product-variant")
+public class ProductVariantApi {
 
     private ProductService productService;
     private ProductVariantService productVariantService;
@@ -40,7 +39,7 @@ public class ProductApi {
     private JwtService jwtService;
 
 
-    public ProductApi(ProductService productService, ProductRepo repo, SizeRepo sizeRepo, ColorRepo colorRepo, ProductVariantService productVariantService) {
+    public ProductVariantApi(ProductService productService, ProductRepo repo, SizeRepo sizeRepo, ColorRepo colorRepo, ProductVariantService productVariantService) {
 
         this.productService = productService;
         this.repo = repo;
@@ -108,15 +107,15 @@ public class ProductApi {
 
             String userId = null;
             String token = null;
-//            try {
-//                token = jwtService.validateToken(bearerToken);
-//                userId = jwtService.getUserNameJwt(token);
-//            } catch (Exception ex) {
-//                //Sử dụng Constants.ResponseCode.EXPIRED_JWT hoặc Constants.ResponseCode.INVALID_JWT
-////                Response response = new Response(Constants.ResponseCode.EXPIRED_JWT, null, true, ex.toString());
-//                Response response = new Response("00", "Chưa đăng nhập", true, null);
-//                return ResponseEntity.ok(response);
-//            }
+            try {
+                token = jwtService.validateToken(bearerToken);
+                userId = jwtService.getUserNameJwt(token);
+            } catch (Exception ex) {
+                //Sử dụng Constants.ResponseCode.EXPIRED_JWT hoặc Constants.ResponseCode.INVALID_JWT
+//                Response response = new Response(Constants.ResponseCode.EXPIRED_JWT, null, true, ex.toString());
+                Response response = new Response("00", "Chưa đăng nhập", true, null);
+                return ResponseEntity.ok(response);
+            }
             Page<Map<String, Object>> result = productService.searchParsing(token, search, pageable);
             Response response = new Response("01", "", true, result);
             return ResponseEntity.ok(response);
@@ -147,14 +146,6 @@ public class ProductApi {
             @PathVariable("id") Long id
     ) throws Exception {
         List<SizeItem> result = productVariantService.getSizeByProductId(id);
-        return result;
-    }
-
-    @GetMapping("get-productVariant-by-product-id/{id}")
-    protected List<SizeAndColorItem> getSizeAndColorByProductId(
-            @PathVariable("id") Long id
-    ) throws Exception {
-        List<SizeAndColorItem> result = productVariantService.getSizeAndColorByProductId(id);
         return result;
     }
 

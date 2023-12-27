@@ -19,8 +19,18 @@ public interface OrderItemRepo extends JpaRepository<OrderItem, Long>, PagingAnd
             @Param("price") BigDecimal price
             );
 
+    Optional<OrderItem> findByOrderIdAndProductIdAndProductVariantId(
+            @Param("orderId") Long orderId,
+            @Param("productId") Long productId,
+            @Param("productVariantId") Long productVariantId
+    );
+
     List<OrderItem> findByOrderId(
             @Param("orderId") Long orderId
+    );
+
+    Optional<OrderItem> findById(
+            @Param("id") Long id
     );
 
     @Query(
@@ -36,6 +46,7 @@ public interface OrderItemRepo extends JpaRepository<OrderItem, Long>, PagingAnd
                     " , p.name as productName " +
                     " , pv.size_id as sizeId " +
                     " , pv.color_id as colorId " +
+                    " , p.image as imageProduct " +
                     " FROM orderitems oi " +
                     " LEFT JOIN Productvariants pv ON pv.id = oi.product_variant_id  " +
                     " LEFT JOIN sizes s ON s.id = pv.size_id  " +

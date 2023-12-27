@@ -68,8 +68,8 @@ public class ProductService implements IProductService {
 
 	@Override
 	public Page<Map<String, Object>> searchParsing( String token, String search, Pageable pageable){
-		String userId = null;
-		userId = jwtService.getUserNameJwt(token);
+//		String userId = null;
+//		userId = jwtService.getUserNameJwt(token);
 		return repo.search(defaultStatus, search, pageable);
 	}
 

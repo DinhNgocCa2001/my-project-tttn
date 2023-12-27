@@ -1,19 +1,14 @@
 package com.bookstore.services;
 
-import com.bookstore.entity.DTO.OrderItemReponse;
-import com.bookstore.entity.DTO.OrderRequest;
-import com.bookstore.entity.Order;
-
-import java.util.List;
+import com.bookstore.entity.DTO.OrderItemRequest;
 
 public interface IOrderItemService {
 	
 //	List<User> getUsers();
-	Order createOrder(OrderRequest order);
-	Order addOrder(String token);
-//	List<OrderItem> getListOrderItemByOrderId(Long orderId);
 
-	List<OrderItemReponse> getListOrderItemByOrderId(Long orderId);
+//	List<OrderItemReponse> getListOrderItemByOrderId(Long orderId);
+	String addOrderItem(OrderItemRequest orderItemRequest);
+	String updateOrderItem(OrderItemRequest orderItemRequest);
 
 //
 //		User updateUser(Long userId, User user);

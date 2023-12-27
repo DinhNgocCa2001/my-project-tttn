@@ -14,4 +14,5 @@ public class OrderItemReponse extends OrderItem {
     private String productName;
     private Long sizeId;
     private Long colorId;
+    private String productImage;
 }

@@ -2,15 +2,14 @@ package com.bookstore.services;
 
 import com.bookstore.dao.IProductDAO;
 import com.bookstore.entity.DTO.ColorItem;
+import com.bookstore.entity.DTO.SizeAndColorItem;
 import com.bookstore.entity.DTO.SizeItem;
+import com.bookstore.entity.ProductVariant;
 import com.bookstore.repo.ProductVariantRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class ProductVariantService implements IProductVariantService {
@@ -65,6 +64,12 @@ public class ProductVariantService implements IProductVariantService {
 	}
 
 	@Override
+	public ProductVariant findBySizeIdAndColorIdAndProductId(Long sizeId, Long colorId, Long productId) {
+		Optional<ProductVariant> result = repo.findBySizeIdAndColorIdAndProductId(sizeId, colorId, productId);
+		return result.get();
+	}
+
+	@Override
 	public List<ColorItem> getColorByProductId(Long productId) {
 		try{
 			List<Object[]> listObj =  repo.getColorByProductId(productId);
@@ -112,6 +117,33 @@ public class ProductVariantService implements IProductVariantService {
 		SizeItem sizeItem = new SizeItem();
 		sizeItem.setSizeId(Objects.nonNull(obj[0]) ? ((Integer) obj[0]).longValue() : null);
 		sizeItem.setSizeName(Objects.nonNull(obj[1]) ? obj[1].toString() : null);
+		return sizeItem;
+	}
+
+	@Override
+	public List<SizeAndColorItem> getSizeAndColorByProductId(Long productId) {
+		try{
+			List<Object[]> listObj =  repo.getSizeAndColorByProductId(productId);
+			List<SizeAndColorItem> listSizeItem = new ArrayList<SizeAndColorItem>();
+			for (Object[] obj : listObj) {
+				SizeAndColorItem sizeAndColorItem = new SizeAndColorItem();
+				sizeAndColorItem = convert_result_to_size_color_Item(obj);
+				listSizeItem.add(sizeAndColorItem);
+			}
+			return listSizeItem;
+		}catch (Exception ex){
+			System.out.println(ex);
+			List<SizeAndColorItem> result = null;
+			return result;
+		}
+	}
+
+	private SizeAndColorItem convert_result_to_size_color_Item(Object[] obj) {
+		SizeAndColorItem sizeItem = new SizeAndColorItem();
+		sizeItem.setSizeId(Objects.nonNull(obj[0]) ? ((Integer) obj[0]).longValue() : null);
+		sizeItem.setColorId(Objects.nonNull(obj[1]) ? ((Integer) obj[1]).longValue() : null);
+		sizeItem.setSizeName(Objects.nonNull(obj[2]) ? obj[2].toString() : null);
+		sizeItem.setColorName(Objects.nonNull(obj[3]) ? obj[3].toString() : null);
 		return sizeItem;
 	}
 }

@@ -13,6 +13,11 @@ import java.util.Optional;
 
 public interface ProductVariantRepo extends JpaRepository<ProductVariant, Long>, PagingAndSortingRepository<ProductVariant, Long> {
     Optional<User> findById(Long id);
+    Optional<ProductVariant> findBySizeIdAndColorIdAndProductId(
+            @Param("sizeId") Long sizeId,
+            @Param("colorId") Long colorId,
+            @Param("productId") Long productId
+    );
     Optional<ProductVariant> findBySizeIdAndColorId(
             @Param("sizeId") Long sizeId,
             @Param("colorId") Long colorId
@@ -58,5 +63,21 @@ public interface ProductVariantRepo extends JpaRepository<ProductVariant, Long>,
             nativeQuery = true
     )
     List<Object[]> getSizeByProductId(@Param("productId") Long productId);
+
+    @Query(
+            value = "SELECT DISTINCT " +
+                    " pv.size_id,   " +
+                    " pv.color_id,   " +
+                    " si.name as sizeName, " +
+                    " cl.name as colorName " +
+                    " FROM Productvariants pv " +
+                    " LEFT JOIN Sizes si ON pv.size_id = si.id  " +
+                    " LEFT JOIN Colors cl ON pv.color_id = cl.id  " +
+                    " WHERE pv.product_id = :productId" +
+                    " order by pv.size_id asc"
+            ,
+            nativeQuery = true
+    )
+    List<Object[]> getSizeAndColorByProductId(@Param("productId") Long productId);
 }
 

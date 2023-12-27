@@ -1,7 +1,9 @@
 package com.bookstore.services;
 
 import com.bookstore.entity.DTO.ColorItem;
+import com.bookstore.entity.DTO.SizeAndColorItem;
 import com.bookstore.entity.DTO.SizeItem;
+import com.bookstore.entity.ProductVariant;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,10 @@ public interface IProductVariantService {
 
     List<ColorItem> getColorByProductId(Long ProductId);
     List<SizeItem> getSizeByProductId(Long ProductId);
+    ProductVariant findBySizeIdAndColorIdAndProductId(Long sizeId, Long colorId, Long productId);
+
+    List<SizeAndColorItem> getSizeAndColorByProductId(Long ProductId);
+
 
 //
 //		User updateUser(Long userId, User user);
